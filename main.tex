@@ -1,4 +1,4 @@
-\documentclass[notitlepage]{article}
+\documentclass[notitlepage, 12pt]{article}
 
 \usepackage{amssymb}           % dodatni simboli
 \usepackage{amsmath}           % eqref, npr.
@@ -6,6 +6,15 @@
 \usepackage{amsthm}
 \usepackage{tikz}
 \usepackage[dvipsnames]{xcolor}
+\usepackage{svg}
+
+\usepackage{geometry}
+\geometry{
+  a4paper,
+  total={160mm,257mm}, % total width and height of the text
+  left=25mm, % left margin
+  right=25mm, % right margin
+}
 
 
 
@@ -16,6 +25,7 @@
 
 \newtheorem*{definition}{Definition}
 \newtheorem*{theorem}{Theorem}
+\newtheorem*{lemma}{Lemma}
 \newtheorem*{example}{Example}
 
 \begin{document}
@@ -27,7 +37,8 @@
 \pagenumbering{arabic} 
 \section{Introduction}
 A graph is defined as $G = (V, E)$. $n = |V|$ is the number of vertices, $m = |E|$ is the number of edges.
-We also denote them as $V(G), n(G)$, $E(G), m(G)$.
+We also denote them as $V(G), n(G)$, $E(G), m(G)$. $\delta(G)$ is the minimum degree of a vertex in $G$, $\Delta(G)$ is the maximum degree.
+$G[C]$ represents the induced subgraph of $G$ on the vertex set $C$.
 \section{Independence, matching, covers}
 \begin{definition}
   The set of vertices $S \subseteq V$ is an \textbf{independent set} if $G(S)$ contains no edges.
@@ -66,8 +77,73 @@ Some graphs have no edge covers, for example graphs with isolated vertices.
     \textcolor{purple}{$\beta'(G) = 10$}
 \end{example}
 \newpage
-\Large{Observations}
-\begin{theorem}
-  $\alpha(G) + \beta(G) = |V|$
+\Large{Observations} \normalsize
+\begin{itemize}
+  \item $\alpha(G) + \beta(G) = |V|$ (the size of the maximum independent set plus the size of the minimum vertex cover is equal to the number of vertices)
+  \begin{proof}
+    For every independent set $S$, the complement $\overline{S}$ is a vertex cover and vice versa.
+  \end{proof}
+  $\alpha'(G) \leq \beta(G)$ (the size of the maximum matching is less than or equal to the size of the minimum vertex cover)
+  \begin{figure}[h]
+    \includegraphics[width=0.2\textwidth]{matching-number-smaller-than-vertex-cover.pdf}
+    \centering
+  \end{figure}
+  \begin{proof}
+    Every edge in a maximum matching must be covered by different vertices in the vertex cover.
+  \end{proof}
+  \item $\alpha(G) \leq \beta'(G)$ (the size of the maximum independent set is less than or equal to the size of the minimum edge cover)
+  \begin{proof}
+    Every vertex in a maximum independent set must be covered by different edges in the edge cover.
+  \end{proof}
+  \item if $G$ has no isolated vertices: $\alpha'(G) \leq \frac{n}{2} \leq \beta(G)$
+  \begin{figure}[h]
+    \includegraphics[width=0.2\textwidth]{matching-number-smaller-than-vertex-cover-2.pdf}
+    \centering
+  \end{figure}
+\end{itemize}
+\newpage
+\begin{theorem}[Galloi's theorem]\label{gallois-theorem}
+  If $G$ has no isolated vertices, then $\alpha'(G) + \beta'(G) = n(G)$.
 \end{theorem}
+\begin{proof}
+\begin{itemize}
+    \item[(1)] $\beta'(G) + \alpha'(G) \leq |V(G)|$ \\ \newline
+    \begin{figure}[h]
+      \includegraphics[width=0.4\textwidth]{gallois-theorem-1.pdf}
+      \centering
+    \end{figure}
+    Take a maximum matching $M$; $M = \alpha'(G)$. For every vertex not covered
+    in $M$ ($\overline{V(M)}$), we can take an incident edge and add them to $M$.
+    We get a set of edges $R$, which covers every vertex in $G$.
+    \begin{align*}
+      |R| &= |M| + |\overline{V(M)}| = |M| + (|V(G)| - 2|M|)\\
+      &= |V(G)| - |M|\\
+      \beta'(&G) \leq |R| = |V(G)| - \alpha'(G)\\
+      \beta'(&G) + \alpha'(G) \leq |V(G)|\\
+    \end{align*}
+  \item[(2)] $\beta'(G) + \alpha'(G) \geq |V(G)|$ \\ \newline
+  \begin{lemma}
+    Let $C$ be a minimum edge cover. For every edge in $C$, at least one of its
+    endpoints is covered only once by $C$.
+  \end{lemma}
+  \begin{proof}
+    Suppose $uv \in G$ and $u$ and $v$ are covered by other edges in $C$.
+    $C' = C\ \{uv\}$ is also an edge cover and $|C'| < |C|$ which is a contradiction.
+  \end{proof}
+  Because of this, we can see that $G[C]$ is a star forest (for all minimal edge covers).
+  \begin{figure}[h]
+    \includegraphics[width=0.4\textwidth]{gallois-part-2-star.pdf}
+    \centering
+  \end{figure}
+  $G[C]$ consists of $k$ components: $|C| = |V(G)| - k$. A matching is obtained
+  by chosing one edge from every star component of $G[C]$, the resulting matching
+  has $k$ edges ($|M|$ = $k$)
+  \begin{equation*}
+    \alpha'(G) \geq |M| = k \geq |V(G)| -|C| = |V(G)| - \beta'(G)\\
+  \end{equation*}
+  \begin{equation*}
+    \alpha'(G) + \beta'(G) \geq |V(G)|
+  \end{equation*}
+\end{itemize}
+\end{proof}
 \end{document}
