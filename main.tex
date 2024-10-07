@@ -146,4 +146,76 @@ Some graphs have no edge covers, for example graphs with isolated vertices.
   \end{equation*}
 \end{itemize}
 \end{proof}
+\newpage
+\section{Matchings}
+Structure of the maximum matching $M$. For each $uv \in M$ one of these holds:
+\begin{itemize}
+\item[(1)] 
+\begin{minipage}{.5\textwidth}
+  \[
+    N(u) \cap \overline{V(M)} = \emptyset
+  \]
+  \[
+    N(v) \cap \overline{V(M)} = \emptyset
+  \]
+\end{minipage}% This must go next to `\end{minipage}`
+\begin{minipage}{.5\textwidth}
+  \includegraphics[width=0.45\textwidth]{max-matching-structure-1.pdf}
+  \centering
+\end{minipage}
+
+\item[(2)] 
+\begin{minipage}{.5\textwidth}
+  \[
+    N(u) \cap \overline{V(M)} \neq \emptyset
+  \]
+  \[
+    N(v) \cap \overline{V(M)} \neq \emptyset
+  \]
+\end{minipage}% This must go next to `\end{minipage}`
+\begin{minipage}{.5\textwidth}
+  \includegraphics[width=0.45\textwidth]{max-matching-structure-2.pdf}
+  \centering
+\end{minipage}
+
+\item[(3)]
+\begin{minipage}{.20\textwidth}
+  \[
+    N(u) \cap \overline{V(M)} \neq \emptyset
+  \]
+  \[
+    N(v) \cap \overline{V(M)} = \emptyset
+  \]
+\end{minipage}% This must go next to `\end{minipage}`
+\begin{minipage}{.05\textwidth}
+  or
+  \centering
+\end{minipage}% This must go next to `\end{minipage}`
+\begin{minipage}{.20\textwidth}
+  \[
+    N(u) \cap \overline{V(M)} = \emptyset
+  \]
+  \[
+    N(v) \cap \overline{V(M)} \neq \emptyset
+  \]
+\end{minipage}% This must go next to `\end{minipage}`
+\begin{minipage}{.6\textwidth}
+  \includegraphics[width=0.45\textwidth]{max-matching-structure-3.pdf}
+  \centering
+\end{minipage}
+\end{itemize}
+\begin{definition}
+Let $M$ be a matching. A path $v_1u_1v_2u_2\dots v_k u_k (v_{k+1})$ is an \textbf{m-altering path} if the edges along
+the path alternate between $M$ and $\overline{M} = E \ M$
+\end{definition}
+\begin{figure}[h]
+  \includegraphics[width=0.8\textwidth]{m-alternating-example.pdf}
+  \centering
+\end{figure}
+\begin{definition}
+  An $m$-alternating path is $m$-augmenting if both ends of the path are uncovered by $M$
+\end{definition}
+For example $x_1x_2x_3x_4$ in the above figure.
+This is important because $M'=M \setminus \{x_2x_3\}\cup \{x_1x_2\}$
+is a larger matching.
 \end{document}
