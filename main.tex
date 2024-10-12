@@ -7,8 +7,13 @@
 \usepackage{tikz}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{svg}
+\usepackage{fancyhdr}
+\usepackage[normalem]{ulem}
 \usepackage[hidelinks]{hyperref}
+
 \usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{decorations.pathmorphing}
+
 
 \usepackage{geometry}
 \geometry{
@@ -18,6 +23,11 @@
   right=25mm, % right margin
 }
 
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot[R]{Predavanje 1}
+% remove the header line
+\renewcommand{\headrulewidth}{0pt}
 
 
 \graphicspath{ {./img/} }
@@ -29,6 +39,7 @@
 \newtheorem*{theorem}{Theorem}
 \newtheorem*{lemma}{Lemma}
 \newtheorem*{example}{Example}
+\newtheorem*{corollary}{Corollary}
 
 \begin{document}
 \maketitle
@@ -93,7 +104,7 @@ Some graphs have no edge covers, for example graphs with isolated vertices.
   \begin{proof}
     Every edge in a maximum matching must be covered by different vertices in the vertex cover.
   \end{proof}
-  \item $\alpha(G) \leq \beta'(G)$ (the size of the maximum independent set is less than or equal to the size of the minimum edge cover)
+  \item \MakeLinkTarget{}\label{alpha-leq-betaline} $\alpha(G) \leq \beta'(G)$ (the size of the maximum independent set is less than or equal to the size of the minimum edge cover)
   \begin{proof}
     Every vertex in a maximum independent set must be covered by different edges in the edge cover.
   \end{proof}
@@ -104,7 +115,8 @@ Some graphs have no edge covers, for example graphs with isolated vertices.
   \end{figure}
 \end{itemize}
 \newpage
-\begin{theorem}[Galloi's theorem]\label{gallois-theorem}
+\section{Matchings}
+\begin{theorem}[Galloi's theorem]\MakeLinkTarget{}\label{gallois-theorem}
   If $G$ has no isolated vertices, then $\alpha'(G) + \beta'(G) = n(G)$.
 \end{theorem}
 \begin{proof}
@@ -220,13 +232,441 @@ the path alternate between $M$ and $\overline{M} = E \ M$
 For example $x_1x_2x_3x_4$ in the above figure.
 This is important because $M'=M \setminus \{x_2x_3\}\cup \{x_1x_2\}$
 is a larger matching.
+\newpage
+\fancyfoot[R]{Predavanje 2}
+\begin{theorem}\MakeLinkTarget{}\label{thm:theorem-augmenting-to-maximum}
+  Let $G$ be a graph and $M$ a matching in $G$. If there exists an $M$-augmenting path
+  then $M$ is not a maximum matching.
+\end{theorem}
+\begin{center}
+\begin{tikzpicture}
+  % 6 vertices 
+  \coordinate(p1) at (0,0);
+  \coordinate(p2) at (2,-2);
+  \coordinate(p3) at (4,0);
+  \coordinate(p4) at (6,1);
+  \coordinate(p5) at (8,-1.25);
+  \coordinate(p6) at (10,0);
+
+  \coordinate(a1) at (3.4,-4);
+  \coordinate(a2) at (6,-3.5);
+
+  \coordinate(b1) at (5.2,-2);
+  \coordinate(b2) at (7.7,-3);
+
+  % Draw the pertices
+  \fill (p1) circle (2pt) node[left] {$v_1$};
+  \fill (p2) circle (2pt) node[below] {};
+  \fill (p3) circle (2pt) node[below] {};
+  \fill (p4) circle (2pt) node[below] {};
+  \fill (p5) circle (2pt) node[below] {};
+  \fill (p6) circle (2pt) node[right] {$v_k$};
+
+  \fill (a1) circle (2pt) node[below] {};
+  \fill (a2) circle (2pt) node[below] {};
+
+  \fill (b1) circle (2pt) node[below] {};
+  \fill (b2) circle (2pt) node[below] {};
+
+  % highlight the p1-p2 edges in a different way
+  \draw[thick, black, decorate, decoration={zigzag, segment length=3mm}] (p1) -- (p2);
+  \draw[thick, black, decorate, decoration={zigzag, segment length=3mm}] (p3) -- (p4);
+  \draw[thick, black, decorate, decoration={zigzag, segment length=3mm}] (p5) -- (p6);
+
+  \draw[thick, black, decorate, decoration={zigzag, segment length=3mm}] (a1) -- (a2);
+  \draw[thick, black, decorate, decoration={zigzag, segment length=3mm}] (b1) -- (b2);
+
+  % Draw the edges
+  \draw[thick] (p1) -- (p2) -- (p3) -- (p4) -- (p5) -- (p6);
+
+  \draw[line width=0.5mm, red] (p2) -- (p3) node[midway, below right] {$M$};
+  \draw[line width=0.5mm, red] (p4) -- (p5) node[midway, below left] {$M$};
+
+  \draw[line width=0.5mm, red] (a1) -- (a2) node[midway, above] {$M$};
+  \draw[line width=0.5mm, red] (b1) -- (b2) node[midway, above] {$M$};
+\end{tikzpicture}
+\end{center}
+\begin{proof}
+  Let $P$ be an $M$-augmenting path. $P = v_1v_2\dots v_k$, because it is an augmenting path
+  $v_1v_2 \notin M$ $v_{k-1}v_k \notin M$ $\Rightarrow |E(P) \cap \overline{M}| = |E(P) \cap M|+1$
+  \noindent
+  Let $M' = M \Delta E(P)$, $M'$ is a matching in $G$ (Marked as zigzag lines in the graph).
+
+  \noindent
+  \dashuline{$M'$ is a matching}
+  \begin{itemize}
+    \item For vertices outside $P$ the edges are the same in $M$ and $M'$.
+    \item $v_1, v_k$ were uncovered by $M$ so they are now covered by $M'$.
+    \item For internal vertices: $v_i$ is covered once in $M$. This edge is missing
+    in $M'$, therefore $v_i$ is covered by another edge in $M'$.
+  \end{itemize}
+$\Rightarrow M'$ is a matching, $|M'| = |M| + 1$, so $M$ is not a maximum matching.
+\end{proof}
+
+König-Egerváry graphs:
+\begin{center}
+
+\begin{tikzpicture}
+  \coordinate (p1) at (0,0);
+  \coordinate (p2) at (1.5,0);
+  % first cycle
+  \coordinate (p3) at (-0.5,1.3);
+  \coordinate (p4) at (2,1.3);
+  \coordinate (p5) at (0.75,2.5);
+  % second cycle
+  \coordinate (p6) at (-1,1.3);
+  \coordinate (p7) at (2.5,1.3);
+  \coordinate (p8) at (0.75,3);
+  % third cycle
+  \coordinate (p9) at (-1.5,1.3);
+  \coordinate (p10) at (3,1.3);
+  \coordinate (p11) at (0.75,3.8);
+  
+  
+  \draw[thick] (p1) -- (p2) -- (p4) -- (p5) -- (p3) -- (p1);
+  \draw[thick] (p2) -- (p7) -- (p8) -- (p6) -- (p1);
+  \draw[thick] (p2) -- (p10) -- (p11) -- (p9) -- (p1);
+
+  % highlight the matching
+  \draw[line width=0.6mm, red] (p3) -- (p5);
+  \draw[line width=0.6mm, red] (p2) -- (p4);
+  \draw[line width=0.6mm, red] (p7) -- (p8);
+  \draw[line width=0.6mm, red] (p9) -- (p11) node[midway, above left] {$M$};
+  
+  \foreach \i in {1,...,11} {
+    \fill (p\i) circle (2pt);
+  }
+  \end{tikzpicture}
+\end{center}
+
+König-Egerváry have $\alpha'(G) = \beta(G)$. In the example: $\alpha'(G) = 5 = \beta(G)$, $G$ is not bipartite.
+\begin{theorem}[Königs theorem]\MakeLinkTarget{}\label{konigs-theorem}
+  Let $G$ be a bipartite graph, then the following holds:
+  \begin{itemize}
+    \item[(a)] $\alpha'(G) = \beta(G)$
+    \item[(b)] let $M$ be a matching in $G$ and a $M$-augmenting path does not exist, then
+    $M$ is a maximum matching.
+  \end{itemize}
+\end{theorem}
+\begin{proof}
+Let $G$ be a bipartite graph on sets $A,B$. Suppose that $M$ is a matching such that
+  an $M$-augmenting path in $G$ does not exist (such an $M$ exists).
+  \begin{center}
+    \begin{tikzpicture}
+      % split into A,B and 3 groups (A,B,xy)
+      \draw (0,0) -- (10,0);
+      \draw (4,-2) -- (4,2);
+      \draw (8,-2) -- (8,2);
+
+      %write A,B
+      \node at (0,-1) {$A$};
+      \node at (0,1) {$B$};
+
+      %write B2, A2
+      \node at (2,2) {$B_2$};
+      \node at (2,-2) {$A_2$};
+
+      %write B1, A1
+      \node at (6,2) {$B_1$};
+      \node at (6,-2) {$A_1$};
+
+      %write x,y
+      \node at (9,2) {$Y$};
+      \node at (9,-2) {$X$};
+
+      % draw 3 nodes horizontally in B2 and 3 in A2
+      \coordinate (B21) at (1,1);
+      \coordinate (B22) at (2,1);
+      \coordinate (B23) at (3,1);
+      \coordinate (A21) at (1,-1);
+      \coordinate (A22) at (2,-1);
+      \coordinate (A23) at (3,-1);
+
+      % draw 3 node horizontally in B1 and 3 in A1
+      \coordinate (B11) at (5,1);
+      \coordinate (B12) at (5.66,1);
+      \coordinate (B13) at (6.33,1);
+      \coordinate (B14) at (7,1);
+      \coordinate (A11) at (5,-1);
+      \coordinate (A12) at (5.66,-1);
+      \coordinate (A13) at (6.33,-1);
+      \coordinate (A14) at (7,-1);
+      
+      % draw 2 nodes in y and 3 nodes in x
+      \coordinate (y1) at (8.5,1);
+      \coordinate (y2) at (9.5,1);
+      \coordinate (x1) at (8.5,-1);
+      \coordinate (x2) at (9,-1);
+      \coordinate (x3) at (9.5,-1);
+
+      \fill (y1) circle (2pt);
+      \fill (y2) circle (2pt);
+      \fill (x1) circle (2pt);
+      \fill (x2) circle (2pt);
+      \fill (x3) circle (2pt);
+
+      % connections in matching
+      \draw[line width=0.6mm, red] (B21) -- (A21);
+      \draw[line width=0.6mm, red] (B22) -- (A22);
+      \draw[line width=0.6mm, red] (B23) -- (A23);
+      \draw[line width=0.6mm, red] (B11) -- (A11);
+      \draw[line width=0.6mm, red] (B12) -- (A12);
+      \draw[line width=0.6mm, red] (B13) -- (A13);
+      \draw[line width=0.6mm, red] (B14) -- (A14);
+
+      % connections between nodes
+      \draw (B22) -- (A21);
+      \draw (B22) -- (A23);
+
+      \draw (A22) -- (y1);
+      \draw (A23) -- (y2);
+
+      \draw (B11) -- (A13);
+      \draw (B12) -- (A11);
+      \draw (B13) -- (A14);
+      \draw (B14) -- (A12);
+      \draw (B12) -- (x2);
+      \draw (B14) -- (x1);
+      \draw (A23) -- (B11);
+
+      \fill (B21) circle (2pt);
+      \fill (B22) circle (2pt);
+      \fill (B23) circle (2pt);
+      \fill (A21) circle (2pt);
+      \fill (A22) circle (2pt);
+      \fill (A23) circle (2pt);
+      \fill (B11) circle (2pt);
+      \fill (B12) circle (2pt);
+      \fill (B13) circle (2pt);
+      \fill (B14) circle (2pt);
+      \fill (A11) circle (2pt);
+      \fill (A12) circle (2pt);
+      \fill (A13) circle (2pt);
+      \fill (A14) circle (2pt);
+    \end{tikzpicture}
+  \end{center}
+  \begin{itemize}
+    \item $M$ is marked in red
+    \item $x,y$ are the sets of uncovered vertices in $A,B$ ($X = A \setminus V(M)$, $Y = B \setminus V(M)$).
+    \item $B_1$ is the set of vertices in $B$ that are reachable from $X$ with an $M$-alternating path.
+    \item $A_1$ is the set of vertices in $A$ that are reachable from $X$ with an $M$-alternating path.
+    \item $B_2 = B \setminus (B_1 \cup Y)$
+    \item $A_2 = A \setminus (A_1 \cup X)$
+  \end{itemize}
+  $A \rightarrow B$ edges are in $\overline{M}$ \\
+  $B \rightarrow A$ edges are in $M$ \\
+
+  \noindent $A_1 = \{ a\in A\ |\ \exists b \in B_1: ab \in M \}, \quad A_2 = \{ a\in A\ |\ \exists b \in B_2: ab \in M \}$\\
+
+  $|A_1| = |B_1|$;\quad $|A_2| = |B_2|$; \quad$|A_1| + |A_2| = |M|$\\
+
+  We can prove that the following statements hold:
+  \begin{itemize}
+    \item There are no edges between $X$ and $Y$ \\
+    Lets propose $x \in X, y \in Y, xy \in E$. This is an $M$-alternating path of length 1.
+    It is also an $M$-augmenting path, because its endpoints are not covered by $M$. This
+    is a contradiction, because we assumed that there are no $M$-augmenting paths.
+    \item There are no edges between $X$ and $B_2$ \\
+    An edge $x\in X,b\in B2, xb\in E$ is an $M$-alternating path from $X$ to $B_2$ which 
+    contradicts the definition of $B_1$ and $B_2$.
+    \newpage
+    \item There are no edges between $A_1$ and $Y$ \\
+    Suppose that $a\in A_1, y\in Y, ay\in E$.
+
+    \begin{center}
+    \begin{tikzpicture}
+      \draw (0,0) -- (4,0);
+      \draw (2,-2) -- (2,2);
+
+      %write A,B
+      \node at (0,-1) {$A$};
+      \node at (0,1) {$B$};
+
+      %write B1, A1
+      \node at (1,2) {$B_1$};
+      \node at (1,-2) {$A_1$};
+
+      %write x,y
+      \node at (3,2) {$Y$};
+      \node at (3,-2) {$X$};
+
+      % draw 3 node horizontally in B1 and 3 in A1
+      \coordinate (B11) at (1,1);
+      \coordinate (A11) at (1,-1);
+      \coordinate (Y1) at (3,1);
+      \coordinate (X1) at (3,-1);
+
+      \fill (B11) circle (2pt);
+      \fill (A11) circle (2pt);
+      \fill (Y1) circle (2pt);
+      \fill (X1) circle (2pt);
+
+      % connections in matching
+      \draw[line width=0.6mm, red] (B11) -- (A11);
+
+      % connections between nodes
+      \draw (B11) -- (X1);
+      \draw (A11) -- (Y1);
+    \end{tikzpicture}
+  \end{center}
+
+    There exists an $M$-alternating path from $X$ to $B_1$:
+    \[v_1v_2\dots v_k,\ v_1 \in X,\ v_k \in B_1\]
+    We can now add an edge from $v_k$ to $a$ from the matching $M$ and $ay$ not from $M$.
+    The path
+    \[v_1v_2\dots v_kay\]
+    is an $M$-alternating path and because $v_1$ and $y$ are not covered by $M$ it is also an $M$-augmenting path.
+    \item There are no edges between $A_1$ and $B_2$ \\
+    If we begin an $M$-alternating path in $X$ and end in $A_1$ we get a path:
+    \[xv_2\dots v_{k-1}a,\ x \in X,\ a \in A_1\]
+    Now we can add the edge $ab, b\in B_1, ab \notin M$. We know that $v_{k-1}a \in M$ so
+    $x_1v_2\dots v_{k-1}ab$ is an $M$-alternating path. $B_1$ is therefore reachable from $X$ with
+    an $M$-alternating path. This a contradiction with the definition
+    of $B_1$ and $B_2$.
+  \end{itemize}
+
+  \noindent\dashuline{$T=B_1 \cup A_2$ is a vertex cover}\\
+  We only need to prove that all edges from $A = X\cup A_1\cup A_2$ are covered by the vertex cover because the graph
+  is a bipartite graph.
+  \begin{itemize}
+    \item all edges from $X$ are covered by a vertex in $B_1$
+    \item all edges from $A_1$ are covered by a vertex in $B_1$
+    \item all edges from $A_2$ are covered by a vertex in $A_2$
+  \end{itemize}
+
+  Now we can finish the proof:
+  \[|T| = |B_1|+|A_2| = |A_1|+|A_2|=|M|\]
+  \[\beta(G) \leq |T| = |M| \leq \underbrace{\alpha'(G) \leq \beta(G)}_{\text{\hyperref[alpha-leq-betaline]{proven}}}\]
+  From this we can conclude:
+  \begin{itemize}
+    \item[(a)] $\alpha'(G) = \beta(G)$
+    \item[(b)] $|M| = \alpha'(G)$ therefore $M$ is a maximum matching.
+  \end{itemize}
+\end{proof}
+\begin{corollary}
+  If $G$ is a bipartite graph then $\alpha(G) = \beta'(G)$.
+\end{corollary}
+\begin{proof}
+  \[\alpha(G) = n(G) - \beta(G) \stackrel{ \stackrel{\text{Königs}}{\downarrow} }{=} n(G) - \alpha'(G) \stackrel{ \stackrel{\text{\hyperref[gallois-theorem]{Gallois}}}{\downarrow} }{=} \beta'(G)\]
+\end{proof}
+\begin{definition}[HC]
+  $G$ is a bipartite on the sets $A,B$. \textbf{Halls condition (HC)} holds for $A$ if 
+  \[\forall S \subseteq A:\quad |S| \leq |N(G)|\]
+  where $N(S) = \cup_{x\in S} N(x)$ is the set of neighbors of $S$.
+\end{definition}
+\begin{theorem}[Halls theorem]
+  $G$ bipartite on $A,B$. There exists a matching that covers $A \iff$ HC holds for $A$.
+\end{theorem}
+\begin{proof}\hfill
+
+  \begin{itemize}
+    \item[($\Rightarrow$)] Let $M$ be the matching that covers $A$. $\forall S \subseteq A$ we can take
+    the pairs matched by $M$:
+    \[ B_S = \{ v\in B\ |\ \exists u\in S: uv\in M\} \]
+    We know that $|S| = |B_S|$ and $B_S \subseteq N(S) \Rightarrow |S| = |B_S| \leq |N(S)|$. Therefore HC holds for $A$.
+    \item[($\Leftarrow$)] We have to prove that there does not exist a matching $M$ that covers $A \Rightarrow$ HC does not hold for $A$ \\ Take the maximum matching in $G$. Lets draw the same picture for $G$ as in the proof of \hyperref[konigs-theorem]{Königs theorem}.
+    \begin{center}
+      \begin{tikzpicture}
+        % split into A,B and 3 groups (A,B,xy)
+        \draw (0,0) -- (10,0);
+        \draw (4,-2) -- (4,2);
+        \draw (8,-2) -- (8,2);
+  
+        %write A,B
+        \node at (0,-1) {$A$};
+        \node at (0,1) {$B$};
+  
+        %write B2, A2
+        \node at (2,2) {$B_2$};
+        \node at (2,-2) {$A_2$};
+  
+        %write B1, A1
+        \node at (6,2) {$B_1$};
+        \node at (6,-2) {$A_1$};
+  
+        %write x,y
+        \node at (9,2) {$Y$};
+        \node at (9,-2) {$X$};
+  
+        % draw 3 nodes horizontally in B2 and 3 in A2
+        \coordinate (B21) at (1,1);
+        \coordinate (B22) at (2,1);
+        \coordinate (B23) at (3,1);
+        \coordinate (A21) at (1,-1);
+        \coordinate (A22) at (2,-1);
+        \coordinate (A23) at (3,-1);
+  
+        
+        % draw 3 node horizontally in B1 and 3 in A1
+        \coordinate (B11) at (5,1);
+        \coordinate (B12) at (5.66,1);
+        \coordinate (B13) at (6.33,1);
+        \coordinate (B14) at (7,1);
+        \coordinate (A11) at (5,-1);
+        \coordinate (A12) at (5.66,-1);
+        \coordinate (A13) at (6.33,-1);
+        \coordinate (A14) at (7,-1);
+        
+        % draw 2 nodes in y and 3 nodes in x
+        \coordinate (y1) at (8.5,1);
+        \coordinate (y2) at (9.5,1);
+        \coordinate (x1) at (8.5,-1);
+        \coordinate (x2) at (9,-1);
+        \coordinate (x3) at (9.5,-1);
+  
+        \fill (y1) circle (2pt);
+        \fill (y2) circle (2pt);
+        \fill (x1) circle (2pt);
+        \fill (x2) circle (2pt);
+        \fill (x3) circle (2pt);
+  
+        % connections in matching
+        \draw[line width=0.6mm, red] (B21) -- (A21);
+        \draw[line width=0.6mm, red] (B22) -- (A22);
+        \draw[line width=0.6mm, red] (B23) -- (A23);
+        \draw[line width=0.6mm, red] (B11) -- (A11);
+        \draw[line width=0.6mm, red] (B12) -- (A12);
+        \draw[line width=0.6mm, red] (B13) -- (A13);
+        \draw[line width=0.6mm, red] (B14) -- (A14);
+
+        \fill (B21) circle (2pt);
+        \fill (B22) circle (2pt);
+        \fill (B23) circle (2pt);
+        \fill (A21) circle (2pt);
+        \fill (A22) circle (2pt);
+        \fill (A23) circle (2pt);
+        \fill (B11) circle (2pt);
+        \fill (B12) circle (2pt);
+        \fill (B13) circle (2pt);
+        \fill (B14) circle (2pt);
+        \fill (A11) circle (2pt);
+        \fill (A12) circle (2pt);
+        \fill (A13) circle (2pt);
+        \fill (A14) circle (2pt);
+
+        % draw a rounded square around the nodes of A1 and X
+        \draw (4.5,-0.5) rectangle (10,-1.5);
+
+        % write S on the right edge of the square
+        \node at (10.5,-1) {$S$};
+
+      \end{tikzpicture}
+    \end{center}
+    The maximum matching does not cover $A \Rightarrow X \neq \emptyset$. Consider $S = A_1 \cup X$.
+    We have seen that all neighbors of $S$ are in $B_1$ (in \hyperref[konigs-theorem]{Königs}) so 
+    $N(S) = B_1$, $|S| = |A_1| + |X|$ and $|N(S)| = |B_1| = |A_1|$ so $|S| > |N(S)|$ which
+    means that HC does not hold for $A$.
+  \end{itemize}
+\end{proof}
+\newpage
+\fancyfoot[R]{Predavanje 3}
 \begin{theorem}
 Let $M$ be a matching in $G$. There exists an $M$-augmenting path
 $\iff$ $M$ is not a maximum matching.
 \end{theorem}
 \begin{proof}
 \begin{itemize}
-  \item[($\Rightarrow$)] trivial
+  \item[($\Rightarrow$)] this was proven in \hyperref[thm:theorem-augmenting-to-maximum]{the previous lecture}
   \item[($\Leftarrow$)] $M$ is a matching, not maximum. Then there exists a  $M'$ matching 
   such that $|M'| > |M|$. Consider $M \Delta M'$ (symmetric difference).
   Let $G' = G[M \Delta M']$. In $G'$, the maximum degree $\Delta(G') \leq 2$. $G'$ contains
@@ -397,7 +837,7 @@ $o(G-S) \leq |S|$ is called the Tutte condition.
       \[|S|=0 \geq o(G-s) = o(G) \geq 0 \quad \Rightarrow \quad o(G)=0\]
       Because the number of odd components is zero, $n$ is even.
     \end{proof}
-    \begin{lemma}\label{proof-lemma:2}
+    \begin{lemma}\MakeLinkTarget{}\label{proof-lemma:2}
       $\forall e \in E(\overline(G))$ $G'=G+e$ has a perfect matching
     \end{lemma}
     \begin{proof}
