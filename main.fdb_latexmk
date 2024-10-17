@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1729156893.39748 "/Users/jakob/Projects/faks/teorija-grafov-zapiski/main.tex" "main.pdf" "main" 1729156895.45456 0
-  "/Users/jakob/Projects/faks/teorija-grafov-zapiski/main.tex" 1729156892.33661 40171 48cb9ab355d1f7765ecdac2797865790 ""
+["pdflatex"] 1729156965.6218 "/Users/jakob/Projects/faks/teorija-grafov-zapiski/main.tex" "main.pdf" "main" 1729156967.17466 0
+  "/Users/jakob/Projects/faks/teorija-grafov-zapiski/main.tex" 1729156963.24098 40151 a1eb13d8a35f47b8800c5769453af633 ""
   "/usr/local/texlive/2024basic/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2024basic/texmf-dist/fonts/tfm/jknappen/ec/tcrm1200.tfm" 1136768653 1536 74b7293ec3713bb7fdca8dd1bd1f469c ""
   "/usr/local/texlive/2024basic/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -185,10 +185,10 @@
   "img/max-matching-structure-1.pdf" 1729154310.66909 7620 55849630ce79c2e318c37deaf7f5d83f ""
   "img/max-matching-structure-2.pdf" 1729154310.67078 8271 b93e49e1d5a489b8425bbaa5fb88c2fd ""
   "img/max-matching-structure-3.pdf" 1729154310.67238 7622 2e7c587d6cbdab7dec37ef7596525915 ""
-  "main.aux" 1729156895.24486 1331 faa57da7b1ec2543e3fab71d8c745024 "pdflatex"
-  "main.out" 1729156895.24572 478 d475b447e738e74d194685e9d20597fa "pdflatex"
-  "main.tex" 1729156892.33661 40171 48cb9ab355d1f7765ecdac2797865790 ""
-  "main.toc" 1729156895.24617 284 52be12628a263d0202038e7c39065590 "pdflatex"
+  "main.aux" 1729156967.01086 1225 c53017df175eba5cdff754958a3ea740 "pdflatex"
+  "main.out" 1729156967.01171 390 ec2c54ab44ec014caa606334bfd0038e "pdflatex"
+  "main.tex" 1729156963.24098 40151 a1eb13d8a35f47b8800c5769453af633 ""
+  "main.toc" 1729156967.01229 219 a0e88e6eb376f8a8685ef2cb4f9aff79 "pdflatex"
   (generated)
   "main.aux"
   "main.log"
