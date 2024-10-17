@@ -7,6 +7,8 @@
 \usepackage{tikz}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{svg}
+\usepackage[hidelinks]{hyperref}
+\usetikzlibrary{decorations.pathreplacing}
 
 \usepackage{geometry}
 \geometry{
@@ -218,4 +220,368 @@ the path alternate between $M$ and $\overline{M} = E \ M$
 For example $x_1x_2x_3x_4$ in the above figure.
 This is important because $M'=M \setminus \{x_2x_3\}\cup \{x_1x_2\}$
 is a larger matching.
+\begin{theorem}
+Let $M$ be a matching in $G$. There exists an $M$-augmenting path
+$\iff$ $M$ is not a maximum matching.
+\end{theorem}
+\begin{proof}
+\begin{itemize}
+  \item[($\Rightarrow$)] trivial
+  \item[($\Leftarrow$)] $M$ is a matching, not maximum. Then there exists a  $M'$ matching 
+  such that $|M'| > |M|$. Consider $M \Delta M'$ (symmetric difference).
+  Let $G' = G[M \Delta M']$. In $G'$, the maximum degree $\Delta(G') \leq 2$. $G'$ contains
+  only paths and cycles. If The component is a cycle:
+
+  \begin{center}
+    \begin{tikzpicture}
+      % Coordinates for the hexagon vertices in the desired positions
+      \coordinate (A) at (-1,1.6);  % Top left
+      \coordinate (B) at (1,1.6);   % Top right
+      \coordinate (C) at (-2,0);  % Left
+      \coordinate (D) at (2,0);   % Right
+      \coordinate (E) at (-1,-1.6); % Bottom left
+      \coordinate (F) at (1,-1.6);  % Bottom right
+  
+      % Draw hexagon with alternating line colors
+      \draw[thick, red] (A) -- (B) node[midway, above] {$M'$};   % Top red line
+      \draw[thick, black] (E) -- (F) node[midway, below] {$M$};    % Bottom red line
+      \draw[thick, black] (B) -- (D) node[midway, right] {$M$};  % Right black line
+      \draw[thick, red] (D) -- (F) node[midway, below right] {$M'$}; % Bottom-right black line
+      \draw[thick, black] (A) -- (C) node[midway, left] {$M$};   % Left black line
+      \draw[thick, red] (C) -- (E) node[midway, below left] {$M'$};  % Bottom-left black line
+      
+      % Draw circles at vertices
+      \foreach \point in {A, B, C, D, E, F} {
+          \fill[white] (\point) circle (3pt);
+          \draw[thick] (\point) circle (3pt);
+      }
+  
+  \end{tikzpicture}
+  \end{center}
+
+  $M$ and $M'$ edges alternate in the cycle, therefore there are the same number of edges from $M$ and $M'$ in the cycle.\\
+  If The component is a path:
+  \begin{itemize}
+    \item path of even length, then $M$,$M'$-edges alternate, therefore there are the same number of edges from $M$ and $M'$ in the path.
+    \item path of odd length, then there is one more edge from $M'$ than from $M$ or vice versa.
+  \end{itemize}
+  \[|M'| > |M| \Rightarrow |M' \setminus M| > |M \setminus M'|\]
+  $\Rightarrow$ there exists a component $G_1'$ in $G'$ such that there are more
+  edges from $M'$ than from $M$. This component is a path of odd length that starts and
+  ends with an edge from $M'$.
+\begin{center}
+  \begin{tikzpicture}
+    % Define coordinates
+    \coordinate (V1) at (0,0);
+    \coordinate (V2) at (2,0);
+    \coordinate (V3) at (4,0);
+    \coordinate (Vn1) at (6,0);
+    \coordinate (Vn) at (8,0);
+
+    % Draw points
+    \fill (V1) circle (2pt) node[below] {$V_1$};
+    \fill (V2) circle (2pt) node[below] {$V_2$};
+    \fill (V3) circle (2pt) node[below] {$V_3$};
+    \fill (Vn1) circle (2pt) node[below] {$V_{n-1}$};
+    \fill (Vn) circle (2pt) node[below] {$V_n$};
+
+    % Draw lines between points
+    \draw (V1) -- (V2);
+    \draw (V2) -- (V3);
+    \draw[dashed] (V3) -- (Vn1);
+    \draw (Vn1) -- (Vn);
+
+    % Add labels above points
+    \node at (1,0.5) {$M'$};
+    \node at (3,0.5) {$M$};
+    \node at (7,0.5) {$M'$};
+  \end{tikzpicture}
+  \end{center}
+
+  The following holds:
+  \begin{itemize}
+    \item $G_1'$ is an $M$-alternating path
+    \item $v_1$ is not covered by $M$.
+    \item in $G'$ $deg(v_1)=1$ (because it is a path component), therefore no
+    edge from $M \setminus M'$ is incident to $v_1$.
+    \item $v_1$ is not incident to any edge from $M \cap M'$ since $v_1$ is
+    already covered by an edge from $M'$.
+  \end{itemize}
+  In conclusion $v_1, v_k$ are not covered by $M$ so $G_1'$ is an alternating
+  path with uncovered endpoints and is therefore an $M$-augmenting path.
+\end{itemize}
+\end{proof}
+Algorithms for the above theorems:
+\begin{itemize}
+  \item "Blossom algorithms" - to find an $M$-augmenting path and improve the matching
+  if possible. The best known algorithm is $O(n\sqrt{n})$.
+  \item We can determine the matching number and the edge cover number in polynomial time.
+\end{itemize}
+\vspace{1cm}
+\begin{definition}[Oddity]
+  $o(G)$: number of odd components in $G$
+\end{definition}
+\begin{theorem}[Tuttes theorem]
+  $G$ has a perfect matching $\iff$ $\forall S \subseteq V(G)$ $o(G-S) \leq |S|$
+\end{theorem}
+$o(G-S) \leq |S|$ is called the Tutte condition.
+\begin{proof}
+  \begin{itemize}
+    \item[($\Rightarrow$)] $M$ is a perfect matching in $G$. For every $S \subseteq V(G)$.
+    \begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+      % Draw the sets H1, H2, and Hk as rectangles
+      \draw[thick] (-5,2) rectangle (-3,4) node[midway, below]{};
+      \draw[thick] (-1,2) rectangle (1,4) node[midway, below]{};
+      \draw[thick] (5,2) rectangle (7,4) node[midway, below]{};
+
+      % write H1, H2, Hk under the rectangles
+      \node at (-4,1.5) {$H_1$};
+      \node at (0,1.5) {$H_2$};
+      \node at (6,1.5) {$H_k$};
+  
+      % Draw the circle S
+      \draw[thick] (0,-2) circle (2) node {$S$};
+  
+      % Connect lines from the left-over vertices of H1, H2, and Hk to the circle S
+      \draw[thick] (-4.5,3) -- (-1,-1.5); % Leftover vertex from H1 to S
+      \draw[thick] (0.5,3) -- (0,-1);   % Leftover vertex from H2 to S
+      \draw[thick] (6.5,3) -- (1,-1.5);     % Leftover vertex from Hk to S
+
+      % Draw vertices in S
+      \fill (0,-1) circle (2pt); % S vertex
+      \fill (-1,-1.5) circle (2pt); % S pair 1
+      \fill (1,-1.5) circle (2pt);  % S pair 2
+  
+      % Draw vertices in H1, H2, Hk
+      \fill (-4.5,3) circle (2pt); % H1 vertex leftover
+      \fill (-4,3.5) circle (2pt); % H1 pair 1
+      \fill (-3.5,3) circle (2pt); % H1 pair 2
+      \draw[thick] (-4,3.5) -- (-3.5,3); % Connect pair in H1
+  
+      \fill (-0.5,3) circle (2pt); % H2 pair 1
+      \fill (0,3.5) circle (2pt);  % H2 pair 2
+      \fill (0.5,3) circle (2pt);  % H2 vertex leftover
+      \draw[thick] (-0.5,3) -- (0,3.5); % Connect pair in H2
+  
+      \fill (5.5,3) circle (2pt); % Hk pair 1
+      \fill (6,3.5) circle (2pt); % Hk pair 2
+      \fill (6.5,3) circle (2pt);   % Hk vertex leftover
+      \draw[thick] (5.5,3) -- (6,3.5); % Connect pair in Hk
+  
+      % Dots between H2 and Hk
+      \node at (3,3) {$\dots$};
+    \end{tikzpicture}
+    \caption{Graph $G$ showing $S$ and $H_i$ which are odd components not in $S$}
+    \end{figure}
+
+    if $H_1$ is an odd component then there exists at least one $M$-edge between $V(H_i)$ and $S$.
+    This holds for every odd component. Therefore there exists at least $o(G-S)$ $M$-edges
+    between $S$ and $\overline{S}$. As $M$ is a matching these edges are incident do different
+    vertices from $S$. Therefore $o(G-S) \leq |S|$ (Tuttes condition holds).
+  
+    \item[($\Leftarrow$)] If the Tuttes condition holds then there exists a perfect matching.
+    Suppose that the lemma does not hold. Then there exists a counter example $F$ on $n$ vertices.
+    \begin{itemize}
+      \item[(1)] $F$ satisfies the Tuttes condition
+      \item[(2)] There does not exist a perfect matching in $F$
+    \end{itemize}
+    We can add edges to $F$ while it remains a counter example, until we get a graph $G$. $G$ is then
+    the largest counter example.
+    \begin{lemma}
+      $n(G)$ is even
+    \end{lemma}
+    \begin{proof}
+      if we take $S = \emptyset$, then
+      \[|S|=0 \geq o(G-s) = o(G) \geq 0 \quad \Rightarrow \quad o(G)=0\]
+      Because the number of odd components is zero, $n$ is even.
+    \end{proof}
+    \begin{lemma}\label{proof-lemma:2}
+      $\forall e \in E(\overline(G))$ $G'=G+e$ has a perfect matching
+    \end{lemma}
+    \begin{proof}
+      \begin{itemize}
+        \item $G+e$ is not a counter example (because of the maximality of $G$).
+        \item $G+e$ satisfies TC:
+        For every $S \subseteq V(G+e)$ $o(G+e-S) \leq |S|$.\\
+        When adding an edge $e$ to $G$ we have 4 cases:
+        \begin{itemize}
+          \item[(a)] If the edge $e$ is inside $S$ or inside a component of $G-S$, then the number of
+          odd components does not change.
+          \item[(b)] If the edge $e$ is between two even components of $G-S$, then the number of odd components
+          does not change.
+          \item[(c)] If the edge $e$ is between odd-even components of $G-S$, then the number of odd components
+          does not change.
+          \item[(d)] If the edge $e$ is between two odd components of $G-S$, then the number of odd components
+          decreases by two (the two odd components become an even component).
+        \end{itemize}
+        Therefore $G'$ satisfies the Tuttes condition:
+        \[|S| \geq o(G-S) \geq o(G'- S)\]
+      \end{itemize}
+      $G'$ is not a counter example, therefore (2) does not hold and there exists a perfect matching in $G'$.
+    \end{proof}
+    To end the proof we need to show that $G$ has a perfect matching. Let $u$ be the set of
+    universal vertices ($deg(v) = n-1$) in $G$. $G[u]$ is a complete graph (fully connected).
+    We can construct a perfect matching for different cases:
+    \begin{enumerate}
+      \item If every $H_i$ induces a complete graph, then we can construct a matching $M$
+      \begin{itemize}
+        \item If $H_i$ is an even component then then we can cover every vertex with $M$-edges inside $H_i$.
+        \item If $H_i$ is an odd component then we cover all but one vertex with $M$-edges inside $H_i$.
+        \item The remaining $o(G-u)$ vertices fro the odd components can be covered with $M$-edges between $u$
+        and the components using $o(G-u)$ different vertices from $u$. This can be done as all edges are present
+        in $G$ between $u$ and $\overline{u}$ and $o(G-u) \leq |u|$.
+        \item If some vertices from $u$ are uncovered then we define a matching on them. This is possible
+        because $G[u]$ is a complete graph, $n(G)$ is even and $M$ covered an even number of vertices so far.
+      \end{itemize}
+      Therefore $G$ has a perfect matching.
+
+      \item If there exists a non-complete component $H_i$, then we can find a pair of vertices $x,y$ such that
+      $dist(x,y) = 2$.
+
+      \begin{center}
+        \begin{tikzpicture}
+
+          % Left square
+          \draw (0,0) rectangle (1,1);
+          
+          % Middle square with label w
+          \draw (2,0) rectangle (3,1);
+          \node at (2.5,0.6) {w};
+          \fill (2.5,0.3) circle (2pt);
+      
+          % Right square
+          \draw (7,0) rectangle (8,1);
+      
+          % Central square with points x, y, z
+          \draw (4,0) rectangle (6,2);
+          \node at (5,2.5) {$H_i$}; % "Hi" above the central square
+          \fill (4.5,0.6) circle (2pt) node[left] {x};
+          \fill (5.5,0.6) circle (2pt) node[right] {y};
+          \fill (4.5,1.5) circle (2pt) node[above] {z};
+          \draw (4.5,0.6) -- (4.5,1.5);
+          \draw (5.5,0.6) -- (4.5,1.5);
+      
+          % Ellipse with label u
+          \draw (4,-2) ellipse (1.5 and 0.75);
+          \node at (4,-2) {u};
+      
+      \end{tikzpicture}
+      \end{center}
+      
+      We can define $z$ as the shared neighbor of $x$ and $y$. There exists a vertex $w$ such
+      that $w$ is not connected to $z$. This vertex exists because $z$ is not a universal vertex.
+      We define 2 expansions (both have a perfect matching because of \hyperref[proof-lemma:2]{lemma 2}):
+      \begin{itemize}
+        \item $G_1 = G + xy \rightarrow M_1$
+        \item $G_2 = G + zw \rightarrow M_2$
+      \end{itemize}
+      $M_1$ contains $xy$, otherwise $M_1$ is a perfect matching in $G$. $M_2$ contains $zw$ because of the same reason.
+      Consider $M_1 \Delta M_2$. First remove the edges from $M_1 \cup M_2$ (isolated vertices).
+      For the remaining edges all vertices are of degree 2, therefore $\exists v$ such that $v$ is connected to
+      one $M_1$-edge and one $M_2$-edge.
+
+      Every non-isolated vertex from $G[M_1 \Delta M_2]$ is of degree 2, therefore the graph is
+      composed of only cycles. Because $M_1$ and $M_2$ alternate, these are even cycles.
+      $xy \in M_1$ and $xy \notin M_2 \Rightarrow xy \in M_1 \Delta M_2$
+      \begin{itemize}
+        \item If $xy$ and $zw$ belong to different components in $G[M_1 \Delta M_2]$.
+        
+        \begin{center}
+        \begin{tikzpicture}
+          % Left polygon (octagon)
+          \foreach \i in {1,...,8} {
+              \coordinate (p\i) at ({360/8 * \i}:1.5);
+              \fill (p\i) circle (2pt);
+          }
+          \draw[thick] (p1) -- (p2) node[midway, above right] {$M_2$}
+                      -- (p3) node[midway, above] {$M_1$}
+                      -- (p4) -- (p5) -- (p6) -- (p7) -- (p8)
+                      -- cycle node[midway, above right] {$M_1$};
+          \node[below right] at (p3) {$x$};
+          \node[below] at (p2) {$y$};
+          
+          % Middle square
+          \draw[thick] (4,-1) rectangle (6,1);
+          \node[above left] at (4,1) {$z$};
+          \node[above right] at (6,1) {$w$};
+          \node[below left] at (4,-1) {};
+          \node[below right] at (6,-1) {};
+          \draw (4,1) -- (6,1) node[midway, above] {$M_2$};
+          \draw (6,1) -- (6,-1) node[midway, right] {$M_1$};
+          \draw (6,-1) -- (4,-1) node[midway, below] {$M_2$};
+          \draw (4,-1) -- (4,1) node[midway, left] {$M_1$};
+          \fill (4,1) circle (2pt);
+          \fill (6,1) circle (2pt);
+          \fill (6,-1) circle (2pt);
+          \fill (4,-1) circle (2pt);
+          
+          % Right diagonal line
+          \draw[thick] (8,0) -- (11.5,1.5) node[midway, below right=5pt] {$M_1 \cap M_2$};
+          \fill (8,0) circle (2pt);
+          \fill (11.5,1.5) circle (2pt);
+          
+          \draw[decorate,decoration={brace,amplitude=10pt,mirror}] (-2,-2) -- (2,-2) node[midway,below=12pt] {$M_2$-edges};
+          
+          \draw[decorate,decoration={brace,amplitude=10pt,mirror}] (3,-2) -- (7,-2) node[midway,below=12pt] {$M_1$-edges};
+          
+          \draw[decorate,decoration={brace,amplitude=10pt,mirror}] (8,-2) -- (12,-2) node[midway,below=12pt] {$M_1 \cap M_2$-edges};
+      
+      
+      \end{tikzpicture}
+    \end{center}
+
+        $M = M_1 \Delta M_2$ is a perfect matching in $G$:
+        \begin{itemize}
+          \item $M \subseteq E(G)$ $xy \notin M$, $zw \notin M$
+          \item Every vertex is covered exactly once by $M$
+        \end{itemize}
+        \item If $xy$ and $zw$ belong to the same component, without loss of generality along the cycle
+        the edges are ordered: $zw\dots xy \dots$ ($yx$ is a symmetric case)
+
+        \begin{tikzpicture}
+
+          % Define the coordinates for the octagon
+          \foreach \i in {1,...,10} {
+              \coordinate (p\i) at ({360/10 * (\i+2)}:3);
+              \fill (p\i) circle (2pt);
+          }
+          
+          % Draw the octagon with different labels on the edges
+          \draw[thick] (p1) -- (p2) node[midway, above left] {$M_1$}
+                      -- (p2) -- (p3) node[midway, above left] {$M_2$}
+                      -- (p3) -- (p4) node[midway, left] {$M_2$}
+                      -- (p4) -- (p5) node[midway, below left] {$M_1$}
+                      -- (p5) -- (p6) node[midway, below] {$M_2$}
+                      -- (p6) -- (p7) node[midway, below right] {$M_1$}
+                      -- (p7) -- (p8) node[midway, right] {$M_2$}
+                      -- (p8) -- (p9) node[midway, right] {$M_1$}
+                      -- (p9) -- (p10) node[midway, above right] {$M_2$}
+                      -- (p10) -- (p1) node[midway, above] {$M_2$};
+
+          \draw[thick, red] (p1) -- (p6) node[midway, left] {$M$};
+          \draw[thick, red] (p2) -- (p3) node[midway, right] {$M$};
+          \draw[thick, red] (p4) -- (p5) node[midway, above right] {$M$};
+          \draw[thick, red] (p7) -- (p8) node[midway, left] {$M$};
+          \draw[thick, red] (p9) -- (p10) node[midway, below left] {$M$};
+      
+          % Label the vertices x, y, z, w
+          \node[above left] at (p1) {$x$};
+          \node[above left] at (p2) {$y$};
+          \node[below right] at (p7) {$w$};
+          \node[below right] at (p6) {$z$};
+      
+      \end{tikzpicture}
+        
+      \end{itemize}
+    \end{enumerate}
+  \end{itemize}
+\end{proof}
+
+\noindent\textbf{Borge-Tutte formula}:
+A maximum matching in $G$ leaves exactly
+\[\max_{S \subseteq V(G)}\{ o(G-S) - |S| \}\]
+uncovered vertices. Equivalently:
+\[ \alpha'(G) = \frac{1}{2}\left( n- \max_{S \subseteq V(G)}\{ o(G-S) - |S| \} \right)\]
 \end{document}
